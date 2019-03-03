@@ -60,8 +60,8 @@ end
   #   end
   # end
 # test 12 re-factor
-  def remove_pet_by_name(pet_shop, name)
-    pet_to_delete = find_pet_by_name(pet_shop, name)
+  def remove_pet_by_name(pet_shop, call)
+    pet_to_delete = find_pet_by_name(pet_shop, call)
     pet_shop[:pets].delete(pet_to_delete)
   end
 
@@ -76,7 +76,7 @@ end
   end
 
   def remove_customer_cash(cust, money)
-    return cust[:cash] -= money
+     cust[:cash] -= money
   end
 
   def customer_pet_count(cust)
@@ -84,9 +84,52 @@ end
   end
 
 
-    def add_pet_to_customer(cust, pet)cd
+    def add_pet_to_customer(cust, call)
          puts cust
-         cust[:pets] << pet
+         cust[:pets] << call
          puts cust
          puts cust[:pets].length
      end
+
+
+       def customer_can_afford_pet(cust, call)
+         if cust[:cash] >= call[:price]
+           return true
+         end
+       else
+         false
+       end
+
+       # #These are 'integration' tests so we want multiple asserts.
+       # #If one fails the entire test should fail
+
+
+       # def find_pet_by_name(pet_shop, call)
+       #   for pet in pet_shop[:pets]
+       #     if pet[:name] == call
+       #       return pet
+       #     end
+       #    end
+       #   return nil
+       # end
+
+
+
+
+       def sell_pet_to_customer(pet_shop, call, cust)
+         if call == nil
+          puts "No pet was passed in"
+          return
+        end
+         customer_can_afford = customer_can_afford_pet(cust, call)
+         customer_pets = customer_pet_count(cust)
+         if call != nil && customer_can_afford
+           puts " customer can afford and pet exists"
+           add_pet_to_customer(cust, call)
+           increase_pets_sold(pet_shop, 1)
+           remove_customer_cash(cust, call[:price])
+           add_or_remove_cash(pet_shop, call[:price])
+          end
+       end
+
+      
